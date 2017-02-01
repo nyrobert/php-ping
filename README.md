@@ -1,6 +1,8 @@
 # PHP ping
 
-PHP native implementation of ICMP-based ping
+PHP native implementation of ICMP ping utility. No external 
+applications are called to ping the remote host; everything is 
+implemented using PHP's socket functions.
 
 ## Requirements
 
@@ -8,8 +10,10 @@ PHP native implementation of ICMP-based ping
 
 ## Usage
 
+Access to raw sockets on UNIX like systems requires root access.
+
  ```shell
-  php ping.php
+  sudo php ping.php
   ```
 
 ## License
