@@ -1,16 +1,17 @@
 <?php
 
-const HOST     = 'www.index.hu';
+const HOST     = 'index.hu';
 const PROTOCOL = 'icmp';
 const COUNT    = 3;
 const TIMEOUT  = 1;
 
+$ipAddress      = getIpAddress();
 $protocolNumber = getprotobyname(PROTOCOL);
-$socket = socket_create(AF_INET, SOCK_RAW, $protocolNumber);
+$socket         = socket_create(AF_INET, SOCK_RAW, $protocolNumber);
 socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => TIMEOUT, 'usec' => 0));
 socket_connect($socket, HOST, 0);
 
-echo sprintf('PING %s (%s):', HOST, gethostbyname(HOST)) . PHP_EOL;
+echo sprintf('PING %s (%s):', HOST, $ipAddress) . PHP_EOL;
 
 for ($i = 0; $i < COUNT; $i++) {
 	$startTime = microtime(true);
@@ -21,8 +22,19 @@ for ($i = 0; $i < COUNT; $i++) {
 	if (socket_read($socket, 255)) {
 		printLine($i, $startTime);
 	} else {
-		$result = false;
+		echo 'Request timed out.';
 	}
+}
+
+function getIpAddress()
+{
+	$ipAddress = gethostbyname(HOST);
+	if ($ipAddress === HOST) {
+		echo sprintf('ping: cannot resolve %s: Unknown host', HOST) . PHP_EOL;
+		exit();
+	}
+
+	return $ipAddress;
 }
 
 function printLine($seq, $startTime)
