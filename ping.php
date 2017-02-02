@@ -5,25 +5,30 @@ const PROTOCOL = 'icmp';
 const COUNT    = 3;
 const TIMEOUT  = 1;
 
-$ipAddress      = getIpAddress();
-$protocolNumber = getprotobyname(PROTOCOL);
-$socket         = socket_create(AF_INET, SOCK_RAW, $protocolNumber);
-socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => TIMEOUT, 'usec' => 0));
-socket_connect($socket, HOST, 0);
+function ping()
+{
+	$ipAddress      = getIpAddress();
+	$protocolNumber = getprotobyname(PROTOCOL);
+	$socket         = socket_create(AF_INET, SOCK_RAW, $protocolNumber);
+	socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => TIMEOUT, 'usec' => 0));
+	socket_connect($socket, HOST, 0);
 
-echo sprintf('PING %s (%s):', HOST, $ipAddress) . PHP_EOL;
+	echo sprintf('PING %s (%s):', HOST, $ipAddress) . PHP_EOL;
 
-for ($i = 0; $i < COUNT; $i++) {
-	$startTime = microtime(true);
+	for ($i = 0; $i < COUNT; $i++) {
+		$startTime = microtime(true);
 
-	$package  = "\x08\x00\x19\x2f\x00\x00\x00\x00\x70\x69\x6e\x67";
-	socket_send($socket, $package, strlen($package), 0);
+		$package  = "\x08\x00\x19\x2f\x00\x00\x00\x00\x70\x69\x6e\x67";
+		socket_send($socket, $package, strlen($package), 0);
 
-	if (socket_read($socket, 255)) {
-		printLine($i, $startTime);
-	} else {
-		echo 'Request timed out.';
+		if (socket_read($socket, 255)) {
+			printLine($i, $startTime);
+		} else {
+			echo 'Request timed out.';
+		}
 	}
+
+	socket_close($socket);
 }
 
 function getIpAddress()
@@ -47,4 +52,4 @@ function formatTime($time)
 	return sprintf('%.3f ms', round($time * 1000, 3));
 }
 
-socket_close($socket);
+ping();
