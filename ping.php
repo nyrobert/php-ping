@@ -71,5 +71,14 @@ function formatTime($time)
 	return sprintf('%.3f ms', round($time * 1000, 3));
 }
 
+function checkInterface()
+{
+	if (PHP_SAPI !== 'cli') {
+		echo 'ping: invalid usage' . PHP_EOL;
+		exit();
+	}
+}
+
+checkInterface();
 parseOptions($argv);
 ping();
