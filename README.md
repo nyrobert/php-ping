@@ -7,6 +7,7 @@ implemented using PHP's socket functions.
 ## Requirements
 
 * [PHP](http://php.net)
+* root access
 
 ## Usage
 
@@ -20,7 +21,7 @@ ping [-c *count*] [-i *interval*]  *destination*
 
 -i *interval*: Wait *interval* seconds between sending each packet (default is 1 second).
 
-## Examples
+### Examples
 
 Access to raw sockets on UNIX like systems requires root access.
 
