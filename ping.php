@@ -43,7 +43,7 @@ function parseOptions($argv)
 	$host = array_pop($argv);
 	if (count($argv) === 0 || empty($host)) {
 		fwrite(STDERR, 'ping: empty host' . PHP_EOL);
-		exit();
+		exit(2);
 	}
 
 	define('HOST', $host);
@@ -54,7 +54,7 @@ function getIpAddress()
 	$ipAddress = gethostbyname(HOST);
 	if ($ipAddress === HOST) {
 		fwrite(STDERR, sprintf('ping: cannot resolve %s: Unknown host', HOST) . PHP_EOL);
-		exit();
+		exit(2);
 	}
 
 	return $ipAddress;
@@ -80,7 +80,7 @@ function checkInterface()
 {
 	if (PHP_SAPI !== 'cli') {
 		fwrite(STDERR, 'ping: invalid usage' . PHP_EOL);
-		exit();
+		exit(2);
 	}
 }
 
