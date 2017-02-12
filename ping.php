@@ -22,7 +22,7 @@ function ping()
 		if (socket_read($socket, 255)) {
 			printLine($i, $startTime);
 		} else {
-			fwrite(STDOUT, 'Request timed out.');
+			fwrite(STDOUT, 'Request timed out.' . PHP_EOL);
 		}
 
 		if ($i < (COUNT - 1)) {
