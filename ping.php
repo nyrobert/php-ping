@@ -11,7 +11,7 @@ function ping()
 	socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 1, 'usec' => 0));
 	socket_connect($socket, HOST, 0);
 
-	echo sprintf('PING %s (%s):', HOST, $ipAddress) . PHP_EOL;
+	printHeader($ipAddress);
 
 	for ($i = 0; $i < COUNT; $i++) {
 		$startTime = microtime(true);
@@ -22,7 +22,7 @@ function ping()
 		if (socket_read($socket, 255)) {
 			printLine($i, $startTime);
 		} else {
-			echo 'Request timed out.';
+			fwrite(STDOUT, 'Request timed out.');
 		}
 
 		if ($i < (COUNT - 1)) {
@@ -42,7 +42,7 @@ function parseOptions($argv)
 
 	$host = array_pop($argv);
 	if (count($argv) === 0 || empty($host)) {
-		echo 'ping: empty host' . PHP_EOL;
+		fwrite(STDERR, 'ping: empty host' . PHP_EOL);
 		exit();
 	}
 
@@ -52,18 +52,23 @@ function parseOptions($argv)
 function getIpAddress()
 {
 	$ipAddress = gethostbyname(HOST);
-	var_dump($ipAddress);
 	if ($ipAddress === HOST) {
-		echo sprintf('ping: cannot resolve %s: Unknown host', HOST) . PHP_EOL;
+		fwrite(STDERR, sprintf('ping: cannot resolve %s: Unknown host', HOST) . PHP_EOL);
 		exit();
 	}
 
 	return $ipAddress;
 }
 
+function printHeader($ipAddress)
+{
+	fwrite(STDOUT, sprintf('PING %s (%s):', HOST, $ipAddress) . PHP_EOL);
+}
+
 function printLine($seq, $startTime)
 {
-	echo sprintf('icmp_seq=%d time=%s', $seq, formatTime(microtime(true) - $startTime)) . PHP_EOL;
+	$time = microtime(true) - $startTime;
+	fwrite(STDOUT, sprintf('icmp_seq=%d time=%s', $seq, formatTime($time)) . PHP_EOL);
 }
 
 function formatTime($time)
@@ -74,7 +79,7 @@ function formatTime($time)
 function checkInterface()
 {
 	if (PHP_SAPI !== 'cli') {
-		echo 'ping: invalid usage' . PHP_EOL;
+		fwrite(STDERR, 'ping: invalid usage' . PHP_EOL);
 		exit();
 	}
 }
