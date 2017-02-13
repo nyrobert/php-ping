@@ -13,6 +13,8 @@ function ping()
 
 	printHeader($ipAddress);
 
+	$hostIsAlive = false;
+
 	for ($i = 0; $i < COUNT; $i++) {
 		$startTime = microtime(true);
 
@@ -20,6 +22,7 @@ function ping()
 		socket_send($socket, $package, strlen($package), 0);
 
 		if (socket_read($socket, 255)) {
+			$hostIsAlive = true;
 			printLine($i, $startTime);
 		} else {
 			fwrite(STDOUT, 'Request timed out.' . PHP_EOL);
@@ -31,6 +34,10 @@ function ping()
 	}
 
 	socket_close($socket);
+
+	if (!$hostIsAlive) {
+		exit(1);
+	}
 }
 
 function parseOptions($argv)
